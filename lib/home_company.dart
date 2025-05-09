@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'notification_company.dart';
 import 'chat_company.dart';
-import 'profile_company.dart';
-import 'AddProject.dart';
 import 'add post.dart';
+import 'AddProject.dart';
 import 'home_worker.dart';
-import 'dart:io';// <-- Needed to check if the image path is a file
-import 'project model.dart';
-import 'package:provider/provider.dart';
-import 'provider.dart';
 
 void main() {
   runApp(MsharienaApp2());
 }
+
+
 
 class MsharienaApp2 extends StatelessWidget {
   const MsharienaApp2({super.key});
@@ -20,38 +17,24 @@ class MsharienaApp2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const HomePage2(),
+      home: const HomePage(),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
-class HomePage2 extends StatefulWidget {
-  const HomePage2({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<HomePage2> createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage2> {
+class _HomePageState extends State<HomePage> {
   // A list to store posts dynamically
   List<Post> posts = [];
   List<Post> filteredPosts = [];
   TextEditingController searchController = TextEditingController();
-  List<Project> projects = []; // List to hold projects
-
-  void _navigateToAddProject(BuildContext context) async {
-    final project = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => PostPage()), // Adjust to your actual AddProject page
-    );
-
-    if (project != null) {
-      setState(() {
-        projects.add(project); // Add the new project to the list
-      });
-    }
-  }
 
   @override
   void initState() {
@@ -169,14 +152,7 @@ class _HomePageState extends State<HomePage2> {
                 ),
               ),
             ),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: projects.length,
-              itemBuilder: (context, index) {
-                return ProjectCard(project: projects[index]);
-              },
-            ),
+
             // Display user posts vertically
             ListView.builder(
               shrinkWrap: true,
@@ -231,10 +207,7 @@ class _HomePageState extends State<HomePage2> {
               IconButton(
                 icon: const Icon(Icons.person,size: 33, color: Colors.white),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ProfileScreen()),
-                  );
+
                 },
               ),
             ],
@@ -285,7 +258,13 @@ class _HomePageState extends State<HomePage2> {
                       SizedBox(height: 20),
                       // Project Button
                       ElevatedButton(
-                        onPressed: () => _navigateToAddProject(context), // Navigate to AddProject page
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) =>  PostPage()),
+                          );
+                          print('Project option selected');
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xFF4B5D69),
                           foregroundColor: Colors.white, // Text color white
@@ -304,94 +283,8 @@ class _HomePageState extends State<HomePage2> {
           },
         ),
       ),
+
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-    );
-  }
-}
-class Project {
-  final String name;
-  final String image;
-  final String subtitle;
-
-  Project(this.name, this.image, this.subtitle);
-
-  @override
-  String toString() {
-    return 'Project{name: $name, image: $image, subtitle: $subtitle}';
-  }
-}
-class ProjectCard extends StatelessWidget {
-  final Project project;
-
-  const ProjectCard({required this.project, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 4,
-      color: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ListTile(
-            title: Text(
-              project.name,
-              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-            ),
-            subtitle: Text(project.subtitle),
-          ),
-          Image.file(File(project.image)), // Display image dynamically
-        ],
-      ),
-    );
-  }
-}
-class ProjectList extends StatefulWidget {
-  const ProjectList({super.key});
-
-  @override
-  _ProjectListState createState() => _ProjectListState();
-}
-
-class _ProjectListState extends State<ProjectList> {
-  List<Project> projects = []; // List to hold projects
-
-  // Navigate to AddProject page and get the project data back
-  void _navigateToAddProject(BuildContext context) async {
-    final Project? project = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => PostPage()), // Ensure PostPage is defined
-    );
-
-    if (project != null) {
-      setState(() {
-        projects.add(project); // Add the new project to the list
-      });
-    }
-  }
-
-  // Concrete implementation of the 'build' method
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Project List"),
-      ),
-      body: ListView.builder(
-        itemCount: projects.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(projects[index].name),
-            subtitle: Text(projects[index].subtitle),
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _navigateToAddProject(context),
-        child: const Icon(Icons.add),
-      ),
     );
   }
 }

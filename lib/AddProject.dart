@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:io'; // Import to handle images from file system
-import 'package:image_picker/image_picker.dart';
-// Import image_picker
-import 'home_company.dart';
-import "home_worker.dart";
-void main() {
-  runApp(PostPage());
-}
+import 'package:image_picker/image_picker.dart'; // Import image_picker
+import 'package:provider/provider.dart';
+import 'provider.dart';  // Import ProjectProvider
 
 class PostPage extends StatefulWidget {
   const PostPage({super.key});
@@ -16,18 +12,9 @@ class PostPage extends StatefulWidget {
 }
 
 class _PostPageState extends State<PostPage> {
-  String selectedBudget = 'budget...';
-  String selectedDayStart = '1'; // Default to Day 1
-  String selectedMonthStart = 'January'; // Default to January
-  String selectedYearStart = '2023'; // Default to 2023
-  String selectedDayEnd = '1'; // Default to Day 1
-  String selectedMonthEnd = 'January'; // Default to January
-  String selectedYearEnd = '2023'; // Default to 2023
-
-  TextEditingController locationController = TextEditingController();
   TextEditingController skillController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
   TextEditingController aboutController = TextEditingController();
-
   File? _image;
 
   // Function to pick an image
@@ -73,14 +60,14 @@ class _PostPageState extends State<PostPage> {
                 onPressed: () {
                   final newProject = Project(
                     skillController.text,
-                    _image?.path ?? '', // If no image, pass empty string
+                    _image?.path ?? '', // If no image, pass an empty string
                     aboutController.text,
                   );
-                  // You would want to pop to the HomeCompany screen instead of the previous screen
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => MsharienaApp()), // Navigate to HomeCompany page
-                  );
+
+                  // Add the new project to the provider and go back to the previous page
+                  Provider.of<ProjectProvider>(context, listen: false)
+                      .addProject(newProject);
+                  Navigator.pop(context); // Go back to the previous screen
                 },
                 child: Text('Post Project'),
               ),

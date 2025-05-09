@@ -4,16 +4,19 @@ import 'notification worker.dart';
 import 'chat.dart';
 import 'profile.dart';
 import "provider.dart";
-import 'home_company.dart';
 import 'project model.dart';
 import 'package:provider/provider.dart';  // Import the Provider package
+import 'home_company.dart';
 
 List<Post> posts = [];
 
 void main() {
-  runApp(MsharienaApp(
-
-  ));
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => ProjectProvider(),
+      child: const MsharienaApp(),
+    ),
+  );
 }
 
 class MsharienaApp extends StatelessWidget {
@@ -22,11 +25,8 @@ class MsharienaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: ChangeNotifierProvider(
-        create: (context) => ProjectProvider(), // Provide ProjectProvider
-    child: const HomePage(), // Set the HomePage (Company page) as the root
-    ),
-    debugShowCheckedModeBanner: false,
+      home: const HomePage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -41,13 +41,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<Post> filteredPosts = [];
   TextEditingController searchController = TextEditingController();
-  List<Project> projects = []; // List to hold projects
-
-
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+    final projects = context.watch<ProjectProvider>().projects;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF2F2F2),
@@ -56,7 +54,7 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
         title: Row(
           mainAxisSize: MainAxisSize.min,
-          children: [
+          children: const [
             Text('Mshari', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 24)),
             Text('عُ', style: TextStyle(color: Color(0xFF75A488), fontWeight: FontWeight.bold, fontSize: 24)),
             Text('na', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 24)),
@@ -97,20 +95,17 @@ class _HomePageState extends State<HomePage> {
               padding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
               child: Text('Projects', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF75A488))),
             ),
-
-            // Display projects here
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: projects.length,
               itemBuilder: (context, index) {
-                return ProjectCard(project: projects[index]);
+                //return ProjectCard(project: projects[index]);
               },
             ),
           ],
         ),
       ),
-
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
         color: Color(0xFF4B5D69),
@@ -124,9 +119,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               IconButton(
                 icon: const Icon(Icons.home, size: 34, color: Color(0xFF75A488)),
-                onPressed: () {
-                  // Do nothing because you are already in home
-                },
+                onPressed: () {},
               ),
               IconButton(
                 icon: const Icon(Icons.chat, size: 33, color: Colors.white),
@@ -147,7 +140,6 @@ class _HomePageState extends State<HomePage> {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen()));
                 },
               ),
-
             ],
           ),
         ),
