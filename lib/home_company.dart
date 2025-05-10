@@ -4,6 +4,11 @@ import 'chat_company.dart';
 import 'add post.dart';
 import 'AddProject.dart';
 import 'home_worker.dart';
+import 'provider.dart';
+import 'package:provider/provider.dart';
+import 'dart:io';
+final projects =[]; // Fetching projects from the provider
+
 
 void main() {
   runApp(MsharienaApp2());
@@ -438,10 +443,7 @@ class PostCard extends StatelessWidget {
               icon: Icon(Icons.arrow_forward_ios, color: Colors.black),
               onPressed: () {
                 // Navigate to user profile screen
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => UserProfileScreen(userName: post.userName)),
-                );
+
               },
             ),
           ),
@@ -472,20 +474,3 @@ class PostCard extends StatelessWidget {
   }
 }
 
-class UserProfileScreen extends StatelessWidget {
-  final String userName;
-
-  const UserProfileScreen({required this.userName, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(userName),
-      ),
-      body: Center(
-        child: Text('User Profile for $userName'),
-      ),
-    );
-  }
-}

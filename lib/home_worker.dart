@@ -3,19 +3,18 @@ import 'dart:io';  // <-- Needed to check if the image path is a file
 import 'notification worker.dart';
 import 'chat.dart';
 import 'profile.dart';
-import "provider.dart";
 import 'project model.dart';
 import 'package:provider/provider.dart';  // Import the Provider package
-import 'home_company.dart';
+import "provider.dart";
+import "newlist.dart";
+
 
 List<Post> posts = [];
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => ProjectProvider(),
-      child: const MsharienaApp(),
-    ),
+       MsharienaApp(),
+
   );
 }
 
@@ -24,6 +23,8 @@ class MsharienaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final projects = Provider.of<ProjectProvider>(context).projects;
+
     return MaterialApp(
       home: const HomePage(),
       debugShowCheckedModeBanner: false,
@@ -45,7 +46,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    final projects = context.watch<ProjectProvider>().projects;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF2F2F2),
@@ -94,6 +94,26 @@ class _HomePageState extends State<HomePage> {
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
               child: Text('Projects', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF75A488))),
+            ),
+            ListView.builder(
+              itemCount: projects.length,
+              itemBuilder: (context, index) {
+                final project = projects[index];
+                return Card(
+                  child: ListTile(
+                    title: Text(project.name),
+                    subtitle: Text(project.subtitle),
+                    leading: project.image.isNotEmpty
+                        ? Image.file(
+                      File(project.image),
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    )
+                        : null,
+                  ),
+                );
+              },
             ),
             ListView.builder(
               shrinkWrap: true,
@@ -175,18 +195,6 @@ List<UserItem> topUsers = [
 // -------------------------
 // Project model + project list
 // -------------------------
-class Project {
-  final String name;
-  final String image;
-  final String subtitle;
-
-  Project(this.name, this.image, this.subtitle);
-
-  @override
-  String toString() {
-    return 'Project{name: $name, image: $image, subtitle: $subtitle}';
-  }
-}
 
 
 // -------------------------
@@ -270,34 +278,6 @@ class UserCard extends StatelessWidget {
 // -------------------------
 // ProjectCard Widget
 // -------------------------
-class ProjectCard extends StatelessWidget {
-  final Project project;
-
-  const ProjectCard({required this.project, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 4,
-      color: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ListTile(
-            title: Text(
-              project.name,
-              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-            ),
-            subtitle: Text(project.subtitle),
-          ),
-          Image.file(File(project.image)), // Display image dynamically
-        ],
-      ),
-    );
-  }
-}
 
 // -------------------------
 // PostCard Widget
@@ -351,163 +331,7 @@ class PostCard extends StatelessWidget {
 // -------------------------
 // ProjectDetailsPage Widget
 // -------------------------
-class ProjectDetailsPage extends StatelessWidget {
-  final Project project;
 
-  const ProjectDetailsPage({required this.project, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          project.name,
-          style: TextStyle(
-            color: Color(0xFF75A488), // Green color for title
-            fontWeight: FontWeight.bold, // Bold title
-          ),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Smaller image with rounded corners
-            Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  project.image,
-                  height: 200, // Smaller size for the image
-                  width: 250, // Ensure image takes full width
-                  fit: BoxFit.cover, // Ensure the image fits properly inside the container
-                ),
-              ),
-            ),
-            Center(
-              child: Text(
-                project.name,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              ),
-            ),
-            const SizedBox(height: 4),
-            // Center the location with the icon
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center, // Centering the row
-                children: [
-                  Icon(
-                    Icons.location_on, // Location icon
-                    color: Color(0xFF75A488), // Green color for the icon
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8), // Space between the icon and the text
-                  Text(
-                    'Tripoli',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[700], // Location text color
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 30),
-
-            // Skill Needed Text
-            Text(
-              'Skill Needed: Construction Worker',
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-
-            // Budget Text
-            Text(
-              'Budget: 10\$ per hour',
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-
-            // Start Date Text
-            Text(
-              'Start Date: 10 January 2025',
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-
-            // End Date Text
-            Text(
-              'End Date: 5 September 2025',
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 45),
-
-            // About this project section
-            Text(
-              'About This Project:',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: Color(0xFF213744),
-              ),
-            ),
-            const SizedBox(height: 8),
-
-            // Rectangle for the project description
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.grey[200], // Light grey background for description
-                borderRadius: BorderRadius.circular(10), // Rounded corners
-                border: Border.all(color: Colors.grey[400]!), // Border color
-              ),
-              child: Text(
-                'We are planning to construct a ten-story building equipped with an elevator.',
-                style: TextStyle(fontSize: 16),
-              ),
-            ),
-            const SizedBox(height: 53),
-
-            // Apply Now button
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  // Navigate to the ApplyFormPage
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ApplyFormPage(project: project),
-                    ),
-                  );
-                },
-                child: Text(
-                  'Apply now',
-                  style: TextStyle(
-                    color: Color(0xff4B5D69), // Set text color to #4B5D69
-                  ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white, // Button background color (set to white for border contrast)
-                  side: BorderSide(
-                    color: Color(0xff4B5D69), // Border color
-                    width: 2, // Border width
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20), // Rounded corners
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 class CustomSearchDelegate extends SearchDelegate {
   final List<Post> posts;
 
@@ -596,107 +420,3 @@ class CustomSearchDelegate extends SearchDelegate {
   }
 }
 
-
-class ApplyFormPage extends StatelessWidget {
-  final Project project;
-
-  // Create TextEditingController for the comment field
-  final TextEditingController commentController = TextEditingController();
-
-  ApplyFormPage({required this.project, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Applying for ${project.name}\'s \n project',
-          style: TextStyle(
-            color: Color(0xFF75A488),
-            fontSize: 20,
-            fontFamily: "Inter", // Green color for title
-          ),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Add CV section
-            Text(
-              'Add CV if you want',
-              style: TextStyle(fontSize: 16, color: Color(0xff213744)),
-            ),
-            const SizedBox(height: 20),
-
-            ElevatedButton.icon(
-              onPressed: () {
-                // Logic for selecting a file (CV)
-                print("CV file added");
-              },
-              icon: Icon(Icons.upload_file),
-              label: Text(
-                "Add file",
-                style: TextStyle(color: Color(0xFF75A488)), // Green text color
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white, // Button background color
-                side: BorderSide(
-                  color: Color(0xFF75A488), // Green border color
-                  width: 2, // Border width
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20), // Rounded corners
-                ),
-              ),
-            ),
-            const SizedBox(height: 100),
-
-            // Add comment section
-            Text(
-              'Add comment:',
-              style: TextStyle(fontSize: 16),
-            ),
-            TextField(
-              controller: commentController, // Attach the controller to the TextField
-              decoration: InputDecoration(
-                hintText: 'Write here.....',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15), // Border radius set to 15
-                ),
-              ),
-              maxLines: 13,
-            ),
-            const SizedBox(height: 20),
-
-            // Send request button
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  // Logic to handle send request
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Your application has been successfully submitted'),
-                  ));
-
-                  // Clear the comment text field after submission
-                  commentController.clear();
-                },
-                child: Text('Send request'),
-                style: ElevatedButton.styleFrom(
-                  side: BorderSide(
-                    color: Color(0xff4B5D69), // Border color
-                    width: 2, // Border width
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20), // Rounded corners
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
