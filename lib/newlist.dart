@@ -6,6 +6,7 @@ import 'provider.dart';
 import 'chat_company.dart';
 import 'add post.dart';
 import 'p2.dart';
+import 'applay.dart';
 final projects =[]; // Fetching projects from the provider
 
 
@@ -13,10 +14,6 @@ class ProjectCard extends StatelessWidget {
   final Project project;
 
   const ProjectCard({required this.project, super.key});
-
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -28,15 +25,27 @@ class ProjectCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // ListTile for the title and subtitle
           ListTile(
             title: Text(
               project.name,
               style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
             ),
             subtitle: Text(project.subtitle),
+
           ),
+
+          // Display the image if available
           project.image.isNotEmpty
-              ? Image.file(File(project.image)) // Display image if path is not empty
+              ? ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.file(
+              File(project.image),
+              width: double.infinity,
+              height: 350,
+              fit: BoxFit.cover,
+            ),
+          )
               : Container(
             width: double.infinity,
             height: 150,
@@ -53,8 +62,8 @@ class ProjectCard extends StatelessWidget {
       ),
     );
   }
-
 }
+
 
 // -------------------------
 // PostCard Widget
@@ -98,13 +107,7 @@ class PostCard extends StatelessWidget {
                 ),
               ],
             ),
-            trailing: IconButton(
-              icon: Icon(Icons.arrow_forward_ios, color: Colors.black),
-              onPressed: () {
-                // Navigate to user profile screen
 
-              },
-            ),
           ),
           // Display the post image (larger image)
           Padding(

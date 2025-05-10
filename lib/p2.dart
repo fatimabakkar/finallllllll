@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'provider.dart';
 import 'newlist.dart';
+import "applay.dart";
+import "add post.dart";
 List<Post> posts = [];
 
 void main() {
@@ -156,30 +158,56 @@ class _HomePageState extends State<HomePage> {
                   itemBuilder: (context, index) {
                     final project = provider.projects[index];
                     return Card(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      elevation: 4,
+                      color: Colors.white,
+                      child: Stack(
                         children: [
-                          ListTile(
-                            title: Text(project.name),
-                            subtitle: Text(project.subtitle),
-                          ),
-                          project.image.isNotEmpty
-                              ? Image.file(
-                            File(project.image),
-                            width: double.infinity,
-                            height: 400,
-                            fit: BoxFit.cover,
-                          )
-                              : Container(
-                            width: double.infinity,
-                            height: 400,
-                            color: Colors.grey[300],
-                            child: const Center(
-                              child: Icon(
-                                Icons.image,
-                                color: Colors.grey,
-                                size: 40,
+                          // The rest of the project content
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // ListTile for the project title and subtitle
+                              ListTile(
+                                title: Text(project.name),
+                                subtitle: Text(project.subtitle),
                               ),
+                              project.image.isNotEmpty
+                                  ? Image.file(
+                                File(project.image),
+                                width: double.infinity,
+                                height: 400,
+                                fit: BoxFit.cover,
+                              )
+                                  : Container(
+                                width: double.infinity,
+                                height: 400,
+                                color: Colors.grey[300],
+                                child: const Center(
+                                  child: Icon(
+                                    Icons.image,
+                                    color: Colors.grey,
+                                    size: 40,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          // Arrow icon in the top-right corner
+                          Positioned(
+                            top: 10,
+                            right: 10,
+                            child: IconButton(
+                              icon: const Icon(Icons.arrow_forward_ios, color: Colors.black),
+                              onPressed: () {
+                                // Navigate to the ProjectDetailPage
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                    builder: (context) => ApplyProjectPage(project: project),
+                                ),);
+                              },
                             ),
                           ),
                         ],
@@ -189,6 +217,7 @@ class _HomePageState extends State<HomePage> {
                 );
               },
             ),
+
 
           ],
         ),
@@ -231,9 +260,51 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
+      floatingActionButton: Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(color: Color(0xFF4B5D69), shape: BoxShape.circle),
+        child: IconButton(
+          icon: const Icon(Icons.add, size: 30, color: Colors.white),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  contentPadding: EdgeInsets.all(20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => addpost()));
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF4B5D69),
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 50),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        ),
+                        child: Text(" Add a Post", style: TextStyle(fontSize: 18)),
+                      ),
+                      SizedBox(height: 20),
+
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      ),
+
     );
   }
 }
+
 // UserItem model + user list
 // -------------------------
 class UserItem {
